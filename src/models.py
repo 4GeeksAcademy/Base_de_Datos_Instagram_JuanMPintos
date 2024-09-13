@@ -13,7 +13,11 @@ class Follower(Base):
     __tablename__ = 'follower'
     user_from_id = Column(Integer)
     user_to_id = Column(Integer)
-
+    
+    #es asi???
+    user_id = Column(Integer, ForeignKey('user_id'))
+    user = relationship(User)
+ 
 class User(Base):
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
@@ -22,16 +26,18 @@ class User(Base):
     last_name = Column(String(20), nullable=False)
     email = Column(String(20), unique=True)
 
+
+
 class MyEnum(enum.Enum):
-    one = 1
-    two = 2
-    three = 3
+    image= "image"
+    video = "video"
+    
 
 class Media(Base):
     __tablename__= 'media'
     id = Column(Integer, primary_key=True)
     type = Column(Enum(MyEnum))
-    url = Column(String(20))
+    url = Column(String(200))
     post_id = Column(Integer)
 
 class Post(Base):
