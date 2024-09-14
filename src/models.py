@@ -11,13 +11,11 @@ Base = declarative_base()
 
 class Follower(Base):
     __tablename__ = 'follower'
-    user_from_id = Column(Integer)
-    user_to_id = Column(Integer)
+    id = Column(Integer, primary_key=True)
+    user_from_id = Column(Integer, ForeignKey('user.id'))
+    user_to_id = Column(Integer, ForeignKey('user.id'))
+
     
-    #es asi???
-    user_id = Column(Integer, ForeignKey('user_id'))
-    user = relationship(User)
- 
 class User(Base):
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
@@ -26,6 +24,9 @@ class User(Base):
     last_name = Column(String(20), nullable=False)
     email = Column(String(20), unique=True)
 
+    relation_follower = relationship('Follower', backref = 'user')
+    relation_post = relationship('Post', backref = 'user')
+    relation_comment = relationship('Comment', backref = 'user')
 
 
 class MyEnum(enum.Enum):
@@ -36,21 +37,25 @@ class MyEnum(enum.Enum):
 class Media(Base):
     __tablename__= 'media'
     id = Column(Integer, primary_key=True)
-    type = Column(Enum(MyEnum))
+    type = Column(Enum("image", "video", "audio", name="media_types"), nullable=False)
     url = Column(String(200))
-    post_id = Column(Integer)
+    post_id = Column(Integer, ForeignKey('post.id'))
 
 class Post(Base):
     __tablename__= 'post'
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer)
+    user_id = Column(Integer, ForeignKey('user.id'))
+
+    relation_media = relationship('Media', backref = 'post')
+    relation_comment = relationship('Comment', backref = 'post')
+
 
 class Comment(Base):
     __tablename__= 'comment'
     id = Column(Integer, primary_key=True)
     comment_text = Column(String(250))
-    author_id = Column(Integer)
-    post_id = Column(Integer)
+    author_id = Column(Integer, ForeignKey('user.id'))
+    post_id = Column(Integer, ForeignKey('post.id'))
 
 
     def to_dict(self):
